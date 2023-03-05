@@ -30,10 +30,6 @@ jobs:
         working-directory: kitx_mobile
 
       - name: Analyze Dart
-        uses: ValentinVignal/action-dart-analyze@v0.15
+        uses: invertase/github-action-dart-analyzer@v1
         with:
-          fail-on: 'warning'
           working-directory: "kitx_mobile/"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          emojis: 'false'
-          line-length: 110

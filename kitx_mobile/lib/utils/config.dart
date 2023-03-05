@@ -8,7 +8,7 @@ import 'package:kitx_mobile/utils/global.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-class _Config {
+class Config {
   var WebService_UdpBroadcastAddress = '224.0.0.0';
   var WebService_UdpPortReceive = 24040;
   var WebService_UdpPortSend = 23404;

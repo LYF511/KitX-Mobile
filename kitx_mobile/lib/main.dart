@@ -11,8 +11,6 @@ import 'package:kitx_mobile/services/web_service.dart';
 import 'package:kitx_mobile/themes/dark_theme.dart';
 import 'package:kitx_mobile/themes/light_theme.dart';
 
-import 'package:kitx_mobile/utils/config.dart';
-import 'package:kitx_mobile/utils/global.dart';
 import 'package:kitx_mobile/utils/log.dart';
 import 'package:kitx_mobile/utils/translation.dart';
 
