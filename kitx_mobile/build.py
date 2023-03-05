@@ -1,51 +1,49 @@
 ﻿import os
 import sys
+import json
 
-from os import listdir
-from os.path import isfile, join
+from pathlib import Path
 
 print("entry args: ", sys.argv)
 
 skipFlutterBuild = False
 
 for arg in sys.argv:
-    if (arg.lower() == "--skip-flutter-build"):
+    if arg.lower() == "--skip-flutter-build":
         skipFlutterBuild = True
 
 commands = [
-    "mkdir .ci_cd",
     "flutter pub get",
     "flutter build apk --split-per-abi",
     "flutter build apk",
-    "cp build/app/outputs/flutter-apk/*.apk .ci_cd/",
-    "cp build/app/outputs/flutter-apk/*.sha1 .ci_cd/",
 ]
+
+Path(".ci_cd").mkdir(parents=True, exist_ok=True)
 
 if not skipFlutterBuild:
     for command in commands:
         print(">>> " + command)
         print(os.system(command))
 
-path = ".ci_cd/"
+path = Path(".ci_cd/")
 
-files = [f for f in listdir(path) if isfile(join(path, f))]
+files = Path("build/app/outputs/flutter-apk/").glob("*")
 
-data = "{ \"publish_list\": [%items%] }"
-items = ""
+data = { "publish_list": [], "sha1": []}
 
-index = 0
-for file in files:
-    newName = file.replace("app", "kitx-mobile")
-    os.rename(path + file, path + newName)
-    items += "\"" + "kitx_mobile/" + path + newName + "\"" + \
-        ("" if index == len(files) - 1 else ",")
-    print(file + " -> " + newName)
-    index += 1
+# index = 0
+for each in files:
+    newName = each.name.replace("app", "kitx-mobile")
+    # os.rename(path + file, path + newName)
+    newFile = each.rename(path / newName)
+    if newFile.suffix == ".apk":
+        data["publish_list"].append(str(newFile.resolve()))
+    elif newFile.suffix == ".sha1":
+        data["sha1"].append(f"{newFile.read_text()} {newFile.stem}")
+    print(each.name + " -> " + newFile.name)
+    # index += 1
 
-data = data.replace("%items%", items)
 
 print(data)
 
-df = open("data.json", "w")
-df.write(data)
-df.close()
+json.dump(data, open("data.json", "w", encoding="utf-8"))
