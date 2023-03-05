@@ -1,0 +1,35 @@
+name: Analyze Code
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - "kitx_mobile/.*/**"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - ".*/**"
+      - "**/*.md"
+      - "kitx_mobile/.*/**"
+
+jobs:
+  build:
+    name: Analyze Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+      
+      - name: Get Packages
+        run: flutter pub get
+        working-directory: kitx_mobile
+
+      - name: Analyze Dart
+        uses: invertase/github-action-dart-analyzer@v1
+        with:
+          working-directory: "kitx_mobile/"
